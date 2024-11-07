@@ -1,15 +1,9 @@
 import pathlib
 import os
-#import random
 platform = os.name
 if not platform == 'nt': pathlib.WindowsPath = pathlib.PosixPath
 import yolov9
-#import requests
-#from io import BytesIO
-#import dill
 from PIL import Image as PILImage
-#import time
-#from image_manager import load_image
 
 def get_pil_image(image_url):
     pillow_image = PILImage.open(image_url).convert("RGB")
@@ -33,6 +27,6 @@ def yolo(image_url):
     else:
         return "No image provided.", 400
 
-yoloModel = yolov9.load('wildepod-species-3-21-2024.pt')
+yoloModel = yolov9.load('species-3-21-2024.pt')
 print(yolo("./bb1.jpg"))
 
