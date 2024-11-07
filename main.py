@@ -27,6 +27,6 @@ def yolo(image_url):
     else:
         return "No image provided.", 400
 
-yoloModel = yolov9.load('species-3-21-2024.pt')
+yoloModel = yolov9.load('model.pt')
 print(yolo("./bb1.jpg"))
 

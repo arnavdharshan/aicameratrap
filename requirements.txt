@@ -1,2 +1,2 @@
 yolov9pip==0.0.4
-Pillow==9.0.1  # https://github.com/python-pillow/Pillow
+Pillow  # https://github.com/python-pillow/Pillow
