@@ -9,7 +9,7 @@ def get_pil_image(image_url):
     pillow_image = PILImage.open(image_url).convert("RGB")
     return pillow_image
 
-def yolo(image_url):
+def get_image_category_from_yolo(image_url):
     if image_url:
         yoloModel.conf = 0.1  # NMS confidence threshold
         yoloModel.iou = 0.45  # NMS IoU threshold
@@ -27,6 +27,14 @@ def yolo(image_url):
     else:
         return "No image provided.", 400
 
+def is_human_present_in_image(image_url):
+   categories = get_image_category_from_yolo(image_url)
+   if "Human" in categories:
+      return True
+   else:
+      return False
+
 yoloModel = yolov9.load('model.pt')
-print(yolo("./bb1.jpg"))
+print(is_human_present_in_image("./camtest1.jpg"))
+print(is_human_present_in_image("./bb1.jpg"))
 
