@@ -1,2 +1,3 @@
 yolov9pip==0.0.4
 Pillow  # https://github.com/python-pillow/Pillow
+numpy==1.24.2

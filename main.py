@@ -1,9 +1,18 @@
+from picamzero import Camera
+import gpiod
+import time
 import pathlib
 import os
 platform = os.name
 if not platform == 'nt': pathlib.WindowsPath = pathlib.PosixPath
 import yolov9
 from PIL import Image as PILImage
+
+def take_picture():
+	cam = Camera()
+	cam.start_preview()
+	cam.take_photo("./cam1.jpg")
+	cam.stop_preview()	
 
 def get_pil_image(image_url):
     pillow_image = PILImage.open(image_url).convert("RGB")
@@ -33,8 +42,27 @@ def is_human_present_in_image(image_url):
       return True
    else:
       return False
+LED_PIN = 13
+def blink_led_red(truefalse):
+	if truefalse == True:
+		chip = gpiod.Chip('gpiochip4')
+		led_line = chip.get_line(LED_PIN)
+		led_line.request(consumer="LED", type=gpiod.LINE_REQ_DIR_OUT)
+		try:
+		   count=1
+		   while count<5:
+		       led_line.set_value(1)
+		       time.sleep(1)
+		       led_line.set_value(0)
+		       time.sleep(1)
+		       count=count+1
+		finally:
+		   print("Releasing the line")
+		   led_line.release()
+
 
 yoloModel = yolov9.load('model.pt')
-print(is_human_present_in_image("./camtest1.jpg"))
-print(is_human_present_in_image("./bb1.jpg"))
-
+#print(is_human_present_in_image("./camtest1.jpg"))
+#print(is_human_present_in_image("./bb1.jpg"))
+blink_led_red(is_human_present_in_image("./camtest1.jpg"))
+take_picture()
