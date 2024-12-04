@@ -1,3 +1,4 @@
+from time import sleep
 from picamzero import Camera
 import gpiod
 import time
@@ -7,6 +8,8 @@ platform = os.name
 if not platform == 'nt': pathlib.WindowsPath = pathlib.PosixPath
 import yolov9
 from PIL import Image as PILImage
+from time import sleep
+import gpiozero
 
 def take_picture():
 	cam = Camera()
@@ -42,27 +45,51 @@ def is_human_present_in_image(image_url):
       return True
    else:
       return False
-LED_PIN = 13
-def blink_led_red(truefalse):
-	if truefalse == True:
-		chip = gpiod.Chip('gpiochip4')
-		led_line = chip.get_line(LED_PIN)
-		led_line.request(consumer="LED", type=gpiod.LINE_REQ_DIR_OUT)
-		try:
-		   count=1
-		   while count<5:
-		       led_line.set_value(1)
-		       time.sleep(1)
-		       led_line.set_value(0)
-		       time.sleep(1)
-		       count=count+1
-		finally:
-		   print("Releasing the line")
-		   led_line.release()
+def blink_led_red():
+	LED_PIN = 13
+	chip = gpiod.Chip('gpiochip4')
+	led_line = chip.get_line(LED_PIN)
+	led_line.request(consumer="LED", type=gpiod.LINE_REQ_DIR_OUT)
+	try:
+	   count=1
+	   while count<5:
+	       led_line.set_value(1)
+	       time.sleep(1)
+	       led_line.set_value(0)
+	       time.sleep(1)
+	       count=count+1
+	finally:
+	   print("Releasing the line")
+	   led_line.release()
 
+def blink_led_green():
+	LED_PIN = 12
+	chip = gpiod.Chip('gpiochip4')
+	led_line = chip.get_line(LED_PIN)
+	led_line.request(consumer="LED", type=gpiod.LINE_REQ_DIR_OUT)
+	try:
+		count=1
+		while count<5:
+			led_line.set_value(1)
+			time.sleep(1)
+			led_line.set_value(0)
+			time.sleep(1)
+			count=count+1
+	finally:
+		print("Releasing the line")
+		led_line.release()
+	
 
 yoloModel = yolov9.load('model.pt')
-#print(is_human_present_in_image("./camtest1.jpg"))
-#print(is_human_present_in_image("./bb1.jpg"))
-blink_led_red(is_human_present_in_image("./camtest1.jpg"))
-take_picture()
+pir = gpiozero.MotionSensor(17)
+pir2 =gpiozero.MotionSensor(4)
+while True:
+	if pir.motion_detected or pir2.motion_detected:
+		print("Motion detected!")
+		take_picture()
+		print("picture")
+		if is_human_present_in_image("./cam1.jpg") == True:
+			blink_led_red()
+		else:
+			blink_led_green()
+	time.sleep(1)
